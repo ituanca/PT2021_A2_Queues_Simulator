@@ -34,6 +34,14 @@ public class Scheduler {
         }
     }
 
+    public void stopServers(){
+        for(Server server : servers){
+            if(server.getQueueThread().isAlive()){
+                server.getQueueThread().interrupt();
+            }
+        }
+    }
+
     public void dispatchClient(Client client){ strategy.addClient(servers, client); }
 
     public ArrayList<Server> getServers() { return servers; }

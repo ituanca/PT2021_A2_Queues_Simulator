@@ -9,7 +9,7 @@ public class Server implements Runnable{
     private int queueIndex;
     private BlockingQueue<Client> clients;
     private AtomicInteger waitingPeriod;
-    private AtomicInteger noOfClientsPerQueue;
+    private AtomicInteger noOfClients;
     private Thread queueThread;
     public static final String OPEN = "Open";
     public static final String CLOSED = "Closed";
@@ -19,7 +19,7 @@ public class Server implements Runnable{
         this.clients = new LinkedBlockingDeque<>();
         this.queueIndex = queueIndex;
         this.queueThread = new Thread(this);
-        this.noOfClientsPerQueue = new AtomicInteger(0);
+        this.noOfClients = new AtomicInteger(0);
         this.waitingPeriod = new AtomicInteger(0);
         this.status = CLOSED;
     }
@@ -28,7 +28,7 @@ public class Server implements Runnable{
         this.clients.add(client);
         client.setStatus(Client.WAITING);
         this.waitingPeriod.addAndGet(client.getServiceTime());
-        this.noOfClientsPerQueue.incrementAndGet();
+        this.noOfClients.incrementAndGet();
         if(this.status.equals(CLOSED)){
             this.status = OPEN;
         }
@@ -37,7 +37,7 @@ public class Server implements Runnable{
     public void removeClientFromQueue(Client client){
         this.clients.remove(client);
         client.setStatus(Client.SERVED);
-        if(this.noOfClientsPerQueue.decrementAndGet() == 0){
+        if(this.noOfClients.decrementAndGet() == 0){
             this.status = CLOSED;
         }
     }
@@ -49,27 +49,27 @@ public class Server implements Runnable{
         }else{
             client.setServiceTime(0);
             removeClientFromQueue(client);
-            this.waitingPeriod.incrementAndGet();
+            this.waitingPeriod.decrementAndGet();
             Thread.sleep(1000);
         }
     }
 
     @Override
     public void run() {
-        while(status.equals(OPEN) && clients.size() > 0){
-            if(!clients.isEmpty()){
-                Client client = this.clients.peek();
-                try {
+        while(status.equals(OPEN) && clients.size() > 0) {
+            Client client = this.clients.peek();
+            try {
+                if(client != null){
                     serveClient(client);
                     this.waitingPeriod.decrementAndGet();
                     this.queueThread.wait(client.getServiceTime() * 1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                    System.out.println("Interruption occurred.");
-                    return;
+                }else{
+
                 }
-            }else{
-                this.waitingPeriod.set(0);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                System.out.println("Interruption occurred.");
+                return;
             }
         }
     }
@@ -86,9 +86,9 @@ public class Server implements Runnable{
 
     public void setQueueIndex(int queueIndex) { this.queueIndex = queueIndex; }
 
-    public AtomicInteger getNoOfClientsPerQueue() { return noOfClientsPerQueue; }
+    public AtomicInteger getNoOfClients() { return noOfClients; }
 
-    public void setNoOfClientsPerQueue(AtomicInteger noOfClientsPerQueue) { this.noOfClientsPerQueue = noOfClientsPerQueue; }
+    public void setNoOfClients(AtomicInteger noOfClients) { this.noOfClients = noOfClients; }
 
     public Thread getQueueThread() { return queueThread; }
 

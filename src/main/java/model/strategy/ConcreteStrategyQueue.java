@@ -16,7 +16,7 @@ public class ConcreteStrategyQueue implements Strategy{
         }
         for(Server server: servers) {
             if(server.getQueueIndex() == shortestQueue.getQueueIndex()){
-                server.getClients().add(client);
+                server.addClientToQueue(client);
                 break;
             }
         }

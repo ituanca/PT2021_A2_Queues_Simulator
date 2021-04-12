@@ -163,7 +163,7 @@ public class SimulationManager implements Runnable{
             while(i.hasNext()) {
                 Client client = i.next();
                 if (client.getArrivalTime() == currentTime) {
-                    //scheduler.dispatchClient(client);
+                    scheduler.dispatchClient(client);
                     i.remove();
                 }else{
                     if(client.getArrivalTime() > currentTime){
@@ -176,5 +176,6 @@ public class SimulationManager implements Runnable{
             writeServers();
             currentTime++;
         }
+        scheduler.stopServers();
     }
 }
