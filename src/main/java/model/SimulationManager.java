@@ -1,7 +1,5 @@
 package model;
 
-import controller.QueuesSimulatorController;
-
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -22,7 +20,6 @@ public class SimulationManager implements Runnable{
     public SelectionPolicy selectionPolicy;
     private final Scheduler scheduler;
     private final ArrayList<Client> generatedClients = new ArrayList<>();
-    private QueuesSimulatorController controller = new QueuesSimulatorController();
 
     public SimulationManager(int noOfClients, int noOfServers, int timeLimit, int minArrivalTime, int maxArrivalTime, int minServiceTime, int maxServiceTime, String selectionPolicyString) {
         this.noOfClients = noOfClients;
@@ -163,7 +160,11 @@ public class SimulationManager implements Runnable{
             while(i.hasNext()) {
                 Client client = i.next();
                 if (client.getArrivalTime() == currentTime) {
-                    scheduler.dispatchClient(client);
+                    try {
+                        scheduler.dispatchClient(client);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     i.remove();
                 }else{
                     if(client.getArrivalTime() > currentTime){
@@ -171,11 +172,16 @@ public class SimulationManager implements Runnable{
                     }
                 }
             }
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             writeSimulationTime(currentTime);
             writeWaitingClients();
             writeServers();
+
             currentTime++;
         }
-        scheduler.stopServers();
     }
 }

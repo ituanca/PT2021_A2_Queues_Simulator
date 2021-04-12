@@ -34,6 +34,12 @@ public class Scheduler {
         }
     }
 
+    public void startServers(){
+        for(int i = 0; i < noOfServers; i++){
+            servers.get(i).getQueueThread().start();
+        }
+    }
+
     public void stopServers(){
         for(Server server : servers){
             if(server.getQueueThread().isAlive()){
@@ -42,7 +48,7 @@ public class Scheduler {
         }
     }
 
-    public void dispatchClient(Client client){ strategy.addClient(servers, client); }
+    public void dispatchClient(Client client) throws InterruptedException { strategy.addClient(servers, client); }
 
     public ArrayList<Server> getServers() { return servers; }
 

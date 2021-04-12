@@ -24,9 +24,8 @@ public class Server implements Runnable{
         this.status = CLOSED;
     }
 
-    public void addClientToQueue(Client client){
+    public void addClientToQueue(Client client) throws InterruptedException {
         this.clients.add(client);
-        client.setStatus(Client.WAITING);
         this.waitingPeriod.addAndGet(client.getServiceTime());
         this.noOfClients.incrementAndGet();
         if(this.status.equals(CLOSED)){
@@ -44,39 +43,43 @@ public class Server implements Runnable{
 
     public void serveClient(Client client) throws InterruptedException {
         if(client.getServiceTime() > 1){
-            client.setStatus(Client.BEING_SERVED);
             client.setServiceTime(client.getServiceTime() - 1);
         }else{
             client.setServiceTime(0);
             removeClientFromQueue(client);
-            this.waitingPeriod.decrementAndGet();
-            Thread.sleep(1000);
         }
+        Thread.sleep(500);
     }
 
     @Override
     public void run() {
-        while(status.equals(OPEN) && clients.size() > 0) {
-            Client client = this.clients.peek();
-            try {
-                if(client != null){
-                    serveClient(client);
-                    this.waitingPeriod.decrementAndGet();
-                    this.queueThread.wait(client.getServiceTime() * 1000);
-                }else{
-
+        System.out.println("Queue " + queueIndex);
+        while(true){
+            if(!clients.isEmpty()) {
+                try {
+                    Client client = this.clients.peek();
+                    if (client != null) {
+                        System.out.println("queue " + queueIndex + " client " + client.getID() + " service time: " + client.getServiceTime());
+                        serveClient(client);
+                        this.waitingPeriod.decrementAndGet();
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    Thread.currentThread().interrupt();
+                    System.out.println("Interruption occurred.");
+                    return;
                 }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-                System.out.println("Interruption occurred.");
-                return;
+            }else{
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
 
-    public BlockingQueue<Client> getClients() {
-        return clients;
-    }
+    public BlockingQueue<Client> getClients() { return clients; }
 
     public AtomicInteger getWaitingPeriod() { return waitingPeriod; }
 

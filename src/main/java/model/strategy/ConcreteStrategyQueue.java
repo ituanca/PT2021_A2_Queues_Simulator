@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public class ConcreteStrategyQueue implements Strategy{
     @Override
-    public void addClient(ArrayList<Server> servers, Client client) {
+    public void addClient(ArrayList<Server> servers, Client client) throws InterruptedException {
         Server shortestQueue = servers.get(0);
         for(Server server: servers){
             if(server.getClients().size() < shortestQueue.getClients().size()){

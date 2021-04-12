@@ -1,0 +1,148 @@
+N: 10
+Q: 5
+simulation time: 20
+selection policy: shortest waiting time
+Time 0
+Waiting clients: (2, 4, 4) (5, 4, 4) (7, 5, 6) (4, 7, 4) (6, 12, 6) (10, 13, 4) (8, 14, 2) (3, 21, 5) (9, 22, 5) 
+(1, 23, 5) 
+Queue 1: Closed
+Queue 2: Closed
+Queue 3: Closed
+Queue 4: Closed
+Queue 5: Closed
+Time 1
+Waiting clients: (2, 4, 4) (5, 4, 4) (7, 5, 6) (4, 7, 4) (6, 12, 6) (10, 13, 4) (8, 14, 2) (3, 21, 5) (9, 22, 5) 
+(1, 23, 5) 
+Queue 1: Closed
+Queue 2: Closed
+Queue 3: Closed
+Queue 4: Closed
+Queue 5: Closed
+Time 2
+Waiting clients: (2, 4, 4) (5, 4, 4) (7, 5, 6) (4, 7, 4) (6, 12, 6) (10, 13, 4) (8, 14, 2) (3, 21, 5) (9, 22, 5) 
+(1, 23, 5) 
+Queue 1: Closed
+Queue 2: Closed
+Queue 3: Closed
+Queue 4: Closed
+Queue 5: Closed
+Time 3
+Waiting clients: (2, 4, 4) (5, 4, 4) (7, 5, 6) (4, 7, 4) (6, 12, 6) (10, 13, 4) (8, 14, 2) (3, 21, 5) (9, 22, 5) 
+(1, 23, 5) 
+Queue 1: Closed
+Queue 2: Closed
+Queue 3: Closed
+Queue 4: Closed
+Queue 5: Closed
+Time 4
+Waiting clients: (7, 5, 6) (4, 7, 4) (6, 12, 6) (10, 13, 4) (8, 14, 2) (3, 21, 5) (9, 22, 5) (1, 23, 5) 
+Queue 1: (2, 4, 4) 
+Queue 2: (5, 4, 4) 
+Queue 3: Closed
+Queue 4: Closed
+Queue 5: Closed
+Time 5
+Waiting clients: (4, 7, 4) (6, 12, 6) (10, 13, 4) (8, 14, 2) (3, 21, 5) (9, 22, 5) (1, 23, 5) 
+Queue 1: (2, 4, 3) 
+Queue 2: (5, 4, 3) 
+Queue 3: (7, 5, 5) 
+Queue 4: Closed
+Queue 5: Closed
+Time 6
+Waiting clients: (4, 7, 4) (6, 12, 6) (10, 13, 4) (8, 14, 2) (3, 21, 5) (9, 22, 5) (1, 23, 5) 
+Queue 1: (2, 4, 2) 
+Queue 2: (5, 4, 2) 
+Queue 3: (7, 5, 4) 
+Queue 4: Closed
+Queue 5: Closed
+Time 7
+Waiting clients: (6, 12, 6) (10, 13, 4) (8, 14, 2) (3, 21, 5) (9, 22, 5) (1, 23, 5) 
+Queue 1: (2, 4, 1) 
+Queue 2: (5, 4, 1) 
+Queue 3: (7, 5, 3) 
+Queue 4: (4, 7, 3) 
+Queue 5: Closed
+Time 8
+Waiting clients: (6, 12, 6) (10, 13, 4) (8, 14, 2) (3, 21, 5) (9, 22, 5) (1, 23, 5) 
+Queue 1: Closed
+Queue 2: Closed
+Queue 3: (7, 5, 2) 
+Queue 4: (4, 7, 2) 
+Queue 5: Closed
+Time 9
+Waiting clients: (6, 12, 6) (10, 13, 4) (8, 14, 2) (3, 21, 5) (9, 22, 5) (1, 23, 5) 
+Queue 1: Closed
+Queue 2: Closed
+Queue 3: (7, 5, 1) 
+Queue 4: (4, 7, 1) 
+Queue 5: Closed
+Time 10
+Waiting clients: (6, 12, 6) (10, 13, 4) (8, 14, 2) (3, 21, 5) (9, 22, 5) (1, 23, 5) 
+Queue 1: Closed
+Queue 2: Closed
+Queue 3: Closed
+Queue 4: Closed
+Queue 5: Closed
+Time 11
+Waiting clients: (6, 12, 6) (10, 13, 4) (8, 14, 2) (3, 21, 5) (9, 22, 5) (1, 23, 5) 
+Queue 1: Closed
+Queue 2: Closed
+Queue 3: Closed
+Queue 4: Closed
+Queue 5: Closed
+Time 12
+Waiting clients: (10, 13, 4) (8, 14, 2) (3, 21, 5) (9, 22, 5) (1, 23, 5) 
+Queue 1: (6, 12, 6) 
+Queue 2: Closed
+Queue 3: Closed
+Queue 4: Closed
+Queue 5: Closed
+Time 13
+Waiting clients: (8, 14, 2) (3, 21, 5) (9, 22, 5) (1, 23, 5) 
+Queue 1: (6, 12, 5) 
+Queue 2: (10, 13, 3) 
+Queue 3: Closed
+Queue 4: Closed
+Queue 5: Closed
+Time 14
+Waiting clients: (3, 21, 5) (9, 22, 5) (1, 23, 5) 
+Queue 1: (6, 12, 4) 
+Queue 2: (10, 13, 2) 
+Queue 3: (8, 14, 2) 
+Queue 4: Closed
+Queue 5: Closed
+Time 15
+Waiting clients: (3, 21, 5) (9, 22, 5) (1, 23, 5) 
+Queue 1: (6, 12, 3) 
+Queue 2: (10, 13, 1) 
+Queue 3: (8, 14, 1) 
+Queue 4: Closed
+Queue 5: Closed
+Time 16
+Waiting clients: (3, 21, 5) (9, 22, 5) (1, 23, 5) 
+Queue 1: (6, 12, 2) 
+Queue 2: Closed
+Queue 3: Closed
+Queue 4: Closed
+Queue 5: Closed
+Time 17
+Waiting clients: (3, 21, 5) (9, 22, 5) (1, 23, 5) 
+Queue 1: (6, 12, 1) 
+Queue 2: Closed
+Queue 3: Closed
+Queue 4: Closed
+Queue 5: Closed
+Time 18
+Waiting clients: (3, 21, 5) (9, 22, 5) (1, 23, 5) 
+Queue 1: Closed
+Queue 2: Closed
+Queue 3: Closed
+Queue 4: Closed
+Queue 5: Closed
+Time 19
+Waiting clients: (3, 21, 5) (9, 22, 5) (1, 23, 5) 
+Queue 1: Closed
+Queue 2: Closed
+Queue 3: Closed
+Queue 4: Closed
+Queue 5: Closed
