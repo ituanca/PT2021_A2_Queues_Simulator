@@ -157,6 +157,11 @@ public class SimulationManager implements Runnable{
         writeInputData();
         while(currentTime < timeLimit) {
             Iterator<Client> i = generatedClients.iterator();
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             while(i.hasNext()) {
                 Client client = i.next();
                 if (client.getArrivalTime() == currentTime) {
@@ -171,11 +176,6 @@ public class SimulationManager implements Runnable{
                         break;
                     }
                 }
-            }
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             }
             writeSimulationTime(currentTime);
             writeWaitingClients();

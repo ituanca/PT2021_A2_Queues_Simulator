@@ -31,6 +31,7 @@ public class Server implements Runnable{
         if(this.status.equals(CLOSED)){
             this.status = OPEN;
         }
+       // Thread.sleep(1000);
     }
 
     public void removeClientFromQueue(Client client){
@@ -48,7 +49,7 @@ public class Server implements Runnable{
             client.setServiceTime(0);
             removeClientFromQueue(client);
         }
-        Thread.sleep(500);
+        Thread.sleep(1000);
     }
 
     @Override

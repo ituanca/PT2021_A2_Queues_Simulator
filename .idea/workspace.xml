@@ -7,14 +7,8 @@
     <list default="true" id="b17bc7ce-98f0-4ee2-bccf-3e5b1f956618" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/logs/log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/logs/log.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/model/LogWriter.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/model/Scheduler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/Scheduler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/model/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/Server.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/model/SimulationManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/SimulationManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/model/strategy/ConcreteStrategyQueue.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/strategy/ConcreteStrategyQueue.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/model/strategy/ConcreteStrategyTime.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/strategy/ConcreteStrategyTime.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/model/strategy/Strategy.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/strategy/Strategy.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/model/Scheduler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/model/Scheduler.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/model/Server.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/model/Server.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/model/SimulationManager.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/model/SimulationManager.class" afterDir="false" />
     </list>
