@@ -20,6 +20,7 @@ public class SimulationManager implements Runnable{
     public SelectionPolicy selectionPolicy;
     private final Scheduler scheduler;
     private final ArrayList<Client> generatedClients = new ArrayList<>();
+    private final Statistics statistics;
 
     public SimulationManager(int noOfClients, int noOfServers, int timeLimit, int minArrivalTime, int maxArrivalTime, int minServiceTime, int maxServiceTime, String selectionPolicyString) {
         this.noOfClients = noOfClients;
@@ -32,6 +33,10 @@ public class SimulationManager implements Runnable{
         establishSelectionPolicy(selectionPolicyString);
         createClientsArray();
         this.scheduler = new Scheduler(noOfServers, generatedClients, selectionPolicy);
+        this.statistics = new Statistics();
+        for(Client client : generatedClients){
+            statistics.addServiceTime(client);
+        }
         for(int i = 0; i < noOfServers; i++){
             scheduler.getServers().get(i).getQueueThread().start();
         }
@@ -79,8 +84,8 @@ public class SimulationManager implements Runnable{
         }
     }
 
-    public void writeInputData() {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("src/main/java/logs/log.txt", true))) {
+    public void writeInputData(String fileName) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileName, true))) {
             bw.write("N: " + noOfClients);
             bw.newLine();
             bw.write("Q: " + noOfServers);
@@ -98,15 +103,16 @@ public class SimulationManager implements Runnable{
         }
     }
 
-    public void writeWaitingClients() {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("src/main/java/logs/log.txt", true))) {
+    public void writeWaitingClients(String fileName) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileName, true))) {
             int count = 0;
             if(generatedClients.size() > 0) {
                 bw.write("Waiting clients: ");
+                bw.newLine();
                 for (Client client : generatedClients) {
                     bw.write("(" + client.getID() + ", " + client.getArrivalTime() + ", " + client.getServiceTime() + ") ");
                     count++;
-                    if (count == 9) {
+                    if (count > 9) {
                         count = 0;
                         bw.newLine();
                     }
@@ -120,30 +126,43 @@ public class SimulationManager implements Runnable{
         }
     }
 
-    public void writeServers() {
-        for(Server server : scheduler.getServers()){
-            writeServer(server);
-        }
-    }
-
-    public static void writeServer(Server server) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("src/main/java/logs/log.txt", true))) {
-            bw.write("Queue " + server.getQueueIndex() + ": ");
-            if(server.getStatus().equals(Server.CLOSED)){
-                bw.write(server.status);
-            }else{
-                for(Client client: server.getClients()){
-                    bw.write("(" + client.getID() + ", " + client.getArrivalTime() + ", " + client.getServiceTime() + ") ");
-                }
+    public void writeServers(String fileName) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileName, true))) {
+            for (Server server : scheduler.getServers()) {
+                writeServer(fileName, server);
             }
+            bw.write("-------------------------------------------------------------------------------------------------------------------");
             bw.newLine();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static void writeSimulationTime(int simulationTime) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("src/main/java/logs/log.txt", true))) {
+    public static void writeServer(String fileName, Server server) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileName, true))) {
+            bw.write("Queue " + server.getQueueIndex() + ": ");
+            int count = 0;
+            if(server.getStatus().equals(Server.CLOSED)){
+                bw.write(server.status);
+            }else{
+                for(Client client: server.getClients()){
+                    if (count > 9) {            // print max 10 clients in a row
+                        count = 0;
+                        bw.newLine();
+                    }
+                    bw.write("(" + client.getID() + ", " + client.getArrivalTime() + ", " + client.getServiceTime() + ") ");
+                    count++;
+                }
+            }
+            bw.write("     waiting time: " + server.getWaitingPeriod() + "  no of clients in queue: " + server.getNoOfClients());
+            bw.newLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void writeSimulationTime(String fileName, int simulationTime) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileName, true))) {
             bw.write("Time " + simulationTime);
             bw.newLine();
         } catch (IOException e) {
@@ -154,7 +173,12 @@ public class SimulationManager implements Runnable{
     @Override
     public void run() {
         int currentTime = 0;
-        writeInputData();
+        String logFileName = "src/main/java/logs/log.txt";
+        String test1FileName = "src/main/java/logs/test1.txt";
+        String test2FileName = "src/main/java/logs/test2.txt";
+        String test3FileName = "src/main/java/logs/test3.txt";
+        int maxNumberOfClientsInQueuesAtATime = 0;
+        writeInputData(logFileName);
         while(currentTime < timeLimit) {
             Iterator<Client> i = generatedClients.iterator();
             try {
@@ -166,7 +190,7 @@ public class SimulationManager implements Runnable{
                 Client client = i.next();
                 if (client.getArrivalTime() == currentTime) {
                     try {
-                        scheduler.dispatchClient(client);
+                        scheduler.dispatchClient(client, statistics);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -177,11 +201,26 @@ public class SimulationManager implements Runnable{
                     }
                 }
             }
-            writeSimulationTime(currentTime);
-            writeWaitingClients();
-            writeServers();
-
+            if(scheduler.computeNoOfClientsCurrentlyInQueues() > maxNumberOfClientsInQueuesAtATime ) {
+                maxNumberOfClientsInQueuesAtATime = scheduler.computeNoOfClientsCurrentlyInQueues();
+                statistics.setPeakHour(currentTime);
+            }
+            writeSimulationTime(logFileName, currentTime);
+            writeWaitingClients(logFileName);
+            writeServers(logFileName);
             currentTime++;
         }
+        try {
+            Thread.sleep(1000);
+            scheduler.stopServers();
+            statistics.computeAverageWaitingTime();
+            System.out.println("average waiting time: " + statistics.averageWaitingTime);
+            statistics.computeAverageServiceTime();
+            System.out.println("average service time: " + statistics.averageServiceTime);
+            System.out.println("peak hour: " + statistics.peakHour + " (" +  maxNumberOfClientsInQueuesAtATime + " clients)");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
     }
 }

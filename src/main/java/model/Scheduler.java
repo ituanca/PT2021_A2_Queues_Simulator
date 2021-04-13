@@ -42,13 +42,22 @@ public class Scheduler {
 
     public void stopServers(){
         for(Server server : servers){
-            if(server.getQueueThread().isAlive()){
-                server.getQueueThread().interrupt();
-            }
+           // if(server.getQueueThread().isAlive()){
+           //     server.getQueueThread().interrupt();
+                server.stopServer();
+            //}
         }
     }
 
-    public void dispatchClient(Client client) throws InterruptedException { strategy.addClient(servers, client); }
+    public int computeNoOfClientsCurrentlyInQueues(){
+        int noOfClientsCurrentlyInQueues = 0;
+        for(Server server : servers){
+            noOfClientsCurrentlyInQueues += server.getNoOfClients().get();
+        }
+        return noOfClientsCurrentlyInQueues;
+    }
+
+    public void dispatchClient(Client client, Statistics statistics) throws InterruptedException { strategy.addClient(servers, client, statistics); }
 
     public ArrayList<Server> getServers() { return servers; }
 

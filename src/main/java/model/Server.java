@@ -14,6 +14,7 @@ public class Server implements Runnable{
     public static final String OPEN = "Open";
     public static final String CLOSED = "Closed";
     public String status;
+    private boolean exit;
 
     public Server(int queueIndex) {
         this.clients = new LinkedBlockingDeque<>();
@@ -22,12 +23,17 @@ public class Server implements Runnable{
         this.noOfClients = new AtomicInteger(0);
         this.waitingPeriod = new AtomicInteger(0);
         this.status = CLOSED;
+        this.exit = false;
     }
 
-    public void addClientToQueue(Client client) throws InterruptedException {
+    public void addClientToQueue(Client client, Statistics statistics) throws InterruptedException {
         this.clients.add(client);
-        this.waitingPeriod.addAndGet(client.getServiceTime());
         this.noOfClients.incrementAndGet();
+        statistics.addClient();
+
+        this.waitingPeriod.addAndGet(client.getServiceTime());
+        statistics.addWaitingTime(this);
+
         if(this.status.equals(CLOSED)){
             this.status = OPEN;
         }
@@ -49,25 +55,24 @@ public class Server implements Runnable{
             client.setServiceTime(0);
             removeClientFromQueue(client);
         }
+        this.waitingPeriod.decrementAndGet();
         Thread.sleep(1000);
     }
 
+    public void stopServer() { exit = true; }
+
     @Override
     public void run() {
-        System.out.println("Queue " + queueIndex);
-        while(true){
+        while(!exit){
             if(!clients.isEmpty()) {
                 try {
                     Client client = this.clients.peek();
                     if (client != null) {
-                        System.out.println("queue " + queueIndex + " client " + client.getID() + " service time: " + client.getServiceTime());
                         serveClient(client);
-                        this.waitingPeriod.decrementAndGet();
                     }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
-                    Thread.currentThread().interrupt();
-                    System.out.println("Interruption occurred.");
+                    System.out.println("Thread was interrupted.");
                     return;
                 }
             }else{
@@ -75,6 +80,8 @@ public class Server implements Runnable{
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
+                    System.out.println("Thread was interrupted.");
+                    return;
                 }
             }
         }
