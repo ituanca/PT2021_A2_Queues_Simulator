@@ -6,13 +6,16 @@
   <component name="ChangeListManager">
     <list default="true" id="b17bc7ce-98f0-4ee2-bccf-3e5b1f956618" name="Default Changelist" comment="good synchronization + Test 2 log">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/controller/QueuesSimulatorController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controller/QueuesSimulatorController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/logs/log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/logs/log.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/logs/test1.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/logs/test1.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/logs/test2.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/logs/test2.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/model/Scheduler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/Scheduler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/logs/test3.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/logs/test3.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/model/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/Client.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/model/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/Server.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/model/SimulationManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/SimulationManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/model/Statistics.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/Statistics.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/model/Scheduler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/model/Scheduler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/view/sample.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/view/sample.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/controller/QueuesSimulatorController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/controller/QueuesSimulatorController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/model/Client.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/model/Client.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/model/Server.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/model/Server.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/model/SimulationManager.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/model/SimulationManager.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

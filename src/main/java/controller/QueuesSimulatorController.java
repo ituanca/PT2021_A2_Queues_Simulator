@@ -3,15 +3,15 @@ package controller;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
+import javafx.fxml.Initializable;
+import javafx.scene.control.*;
+import model.Server;
 import model.SimulationManager;
 import view.Interface;
 import model.Client;
 
-import javafx.scene.control.TextField;
-import java.util.ArrayList;
+import java.net.URL;
+import java.util.ResourceBundle;
 
 public class QueuesSimulatorController {
 
@@ -26,12 +26,13 @@ public class QueuesSimulatorController {
     public String shortestWaitingTime;
     public String smallestNumberOfClients;
     public ComboBox cbSelectionPolicy;
+    public TextArea textArea;
+
+    private final static String NEW_LINE = "\n";
 
     SimulationManager simulationManager;
 
-    public void start(){
-        new Thread(() -> Application.launch(Interface.class)).start();
-    }
+    public void start(){ new Thread(() -> Application.launch(Interface.class)).start(); }
 
     private boolean validateInput(){
         if(tfNumberOfClients.getText().equals("") || tfNumberOfQueues.getText().equals("") || tfSimulationInterval.getText().equals("") ||
@@ -77,6 +78,7 @@ public class QueuesSimulatorController {
     @FXML
     public void startSimulation(ActionEvent actionEvent) throws InterruptedException {
         actionEvent.consume();
+        textArea.setVisible(true);
         if(validateInput()){
             simulationManager = new SimulationManager(getNumberOfClients(), getNumberOfQueues(), getSimulationInterval(),
                     getMinArrivalTime(), getMaxArrivalTime(), getMinServiceTime(), getMaxServiceTime(), getSelectionPolicy());
@@ -84,6 +86,68 @@ public class QueuesSimulatorController {
             t.start();
         }
     }
+
+    public void writeCurrentDataToTheTextArea(TextArea textArea, int simulationTime){
+        writeSimulationTimeToTheTextArea(textArea, simulationTime);
+        writeWaitingClientsToTheTextArea(textArea);
+        writeServersToTheTextArea(textArea);
+    }
+
+    public void writeSimulationTimeToTheTextArea(TextArea textArea, int simulationTime){
+        textArea.appendText("Time: " + simulationTime + NEW_LINE);
+    }
+
+    public void writeWaitingClientsToTheTextArea(TextArea textArea){
+        int count = 0;
+        if(simulationManager.generatedClients.size() > 0) {
+            textArea.appendText("Waiting clients:" + NEW_LINE);
+            for (Client client : simulationManager.generatedClients) {
+                textArea.appendText(" (" + client.getID() + ", " + client.getArrivalTime() + ", " + client.getServiceTime() + ") ");
+                count++;
+                if (count > 5) {
+                    count = 0;
+                    textArea.appendText(NEW_LINE);
+                }
+            }
+            if (count != 0) {
+                textArea.appendText(NEW_LINE);
+            }
+        }
+    }
+
+    public void writeServersToTheTextArea(TextArea textArea){
+        for (Server server : simulationManager.scheduler.getServers()) {
+            writeServerToTheTextArea(textArea, server);
+        }
+        textArea.appendText("-------------------------------------------------------------------------");
+        textArea.appendText(NEW_LINE);
+    }
+
+    public void writeServerToTheTextArea(TextArea textArea, Server server){
+        textArea.appendText("Queue " + server.getQueueIndex() + ": ");
+        int count = 0;
+        if(server.getStatus().equals(Server.CLOSED)){
+            textArea.appendText(server.status);
+        }else{
+            for(Client client: server.getClients()){
+                if (count > 5) {            // print max 6 servers in a row
+                    count = 0;
+                    textArea.appendText(NEW_LINE);
+                }
+                textArea.appendText("(" + client.getID() + ", " + client.getArrivalTime() + ", " + client.getServiceTime() + ") ");
+                count++;
+            }
+        }
+        textArea.appendText(NEW_LINE);
+    }
+
+    public void writeStatisticsToTheTextArea(TextArea textArea){
+        textArea.appendText("average waiting time: " + simulationManager.statistics.changeToDecimalFormat(simulationManager.statistics.averageWaitingTime) + NEW_LINE);
+        textArea.appendText("average service time: " + simulationManager.statistics.changeToDecimalFormat(simulationManager.statistics.averageServiceTime) + NEW_LINE);
+        textArea.appendText("peak hour: " + simulationManager.statistics.peakHour + NEW_LINE);
+        textArea.appendText(NEW_LINE);
+    }
+
 
     private Integer getNumberOfClients() {
         try {
@@ -142,4 +206,5 @@ public class QueuesSimulatorController {
     }
 
     private String getSelectionPolicy() { return (String)cbSelectionPolicy.getValue(); }
+
 }

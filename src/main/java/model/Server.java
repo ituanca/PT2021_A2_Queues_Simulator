@@ -42,7 +42,6 @@ public class Server implements Runnable{
 
     public void removeClientFromQueue(Client client){
         this.clients.remove(client);
-        client.setStatus(Client.SERVED);
         if(this.noOfClients.decrementAndGet() == 0){
             this.status = CLOSED;
         }

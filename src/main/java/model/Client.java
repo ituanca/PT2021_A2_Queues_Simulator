@@ -4,10 +4,6 @@ public class Client implements Comparable<Client>{
     private final Integer ID;
     private final Integer arrivalTime;
     private Integer serviceTime;
-    public static final String NOT_YET_IN_QUEUE = "Not yet in queue";
-    public static final String WAITING = "Waiting";
-    public static final String BEING_SERVED = "Being served";
-    public static final String SERVED = "Served";
     private String status;
 
     public Client(Integer ID, Integer arrivalTime, Integer serviceTime) {

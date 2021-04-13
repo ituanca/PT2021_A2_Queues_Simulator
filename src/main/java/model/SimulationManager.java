@@ -16,11 +16,11 @@ public class SimulationManager implements Runnable{
     public int maxArrivalTime;
     public int minServiceTime;
     public int maxServiceTime;
-
+    public boolean simulationIsFinished;
     public SelectionPolicy selectionPolicy;
-    private final Scheduler scheduler;
-    private final ArrayList<Client> generatedClients = new ArrayList<>();
-    private final Statistics statistics;
+    public final Scheduler scheduler;
+    public final ArrayList<Client> generatedClients = new ArrayList<>();
+    public final Statistics statistics;
 
     public SimulationManager(int noOfClients, int noOfServers, int timeLimit, int minArrivalTime, int maxArrivalTime, int minServiceTime, int maxServiceTime, String selectionPolicyString) {
         this.noOfClients = noOfClients;
@@ -30,6 +30,7 @@ public class SimulationManager implements Runnable{
         this.maxArrivalTime = maxArrivalTime;
         this.minServiceTime = minServiceTime;
         this.maxServiceTime = maxServiceTime;
+        this.simulationIsFinished = false;
         establishSelectionPolicy(selectionPolicyString);
         createClientsArray();
         this.scheduler = new Scheduler(noOfServers, generatedClients, selectionPolicy);
@@ -53,36 +54,10 @@ public class SimulationManager implements Runnable{
     public void createClientsArray(){
         RandomClientsGenerator randomClientsGenerator = new RandomClientsGenerator();
         randomClientsGenerator.createClientsArray(generatedClients, noOfClients, minArrivalTime, maxArrivalTime, minServiceTime, maxServiceTime);
-        for (Client client : generatedClients){
-            client.setStatus(Client.NOT_YET_IN_QUEUE);
-        }
         sortClientsArray();
     }
 
     private void sortClientsArray(){ Collections.sort(generatedClients); }
-
-    private void printInputData(){
-        System.out.println("N: " + noOfClients);
-        System.out.println("Q: " + noOfServers);
-        System.out.println("simulation time: " + timeLimit);
-        System.out.println("selection policy: " + selectionPolicy);
-    }
-
-    private void printClients(){
-        System.out.println("Clients:");
-        int count = 0;
-        for (Client client : generatedClients) {
-            System.out.print("(" + client.getID() + ", " + client.getArrivalTime() + ", " + client.getServiceTime() + ") ");
-            count++;
-            if(count == 10) {
-                count = 0;
-                System.out.println();
-            }
-        }
-        if(count!=0){
-            System.out.println();
-        }
-    }
 
     public void writeInputData(String fileName) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileName, true))) {
@@ -146,7 +121,7 @@ public class SimulationManager implements Runnable{
                 bw.write(server.status);
             }else{
                 for(Client client: server.getClients()){
-                    if (count > 9) {            // print max 10 clients in a row
+                    if (count > 9) {            // print max 10 servers in a row
                         count = 0;
                         bw.newLine();
                     }
@@ -185,6 +160,15 @@ public class SimulationManager implements Runnable{
         }
     }
 
+    public void doStatistics(String currentFileName, int maxNumberOfClientsInQueuesAtATime){
+        statistics.computeAverageWaitingTime();
+        System.out.println("average waiting time: " + statistics.changeToDecimalFormat(statistics.averageWaitingTime));
+        statistics.computeAverageServiceTime();
+        System.out.println("average service time: " + statistics.changeToDecimalFormat(statistics.averageServiceTime));
+        System.out.println("peak hour: " + statistics.peakHour + " (" +  maxNumberOfClientsInQueuesAtATime + " clients)");
+        writeStatisticsResults(currentFileName, statistics);
+    }
+
     @Override
     public void run() {
         int currentTime = 0;
@@ -192,7 +176,7 @@ public class SimulationManager implements Runnable{
         String test1FileName = "src/main/java/logs/test1.txt";
         String test2FileName = "src/main/java/logs/test2.txt";
         String test3FileName = "src/main/java/logs/test3.txt";
-        String currentFileName = test2FileName;
+        String currentFileName = logFileName;
         int maxNumberOfClientsInQueuesAtATime = 0;
 
         writeInputData(currentFileName);
@@ -231,16 +215,10 @@ public class SimulationManager implements Runnable{
         }
         try {
             Thread.sleep(1000);
-            statistics.computeAverageWaitingTime();
-            System.out.println("average waiting time: " + statistics.changeToDecimalFormat(statistics.averageWaitingTime));
-            statistics.computeAverageServiceTime();
-            System.out.println("average service time: " + statistics.changeToDecimalFormat(statistics.averageServiceTime));
-            System.out.println("peak hour: " + statistics.peakHour + " (" +  maxNumberOfClientsInQueuesAtATime + " clients)");
-            writeStatisticsResults(currentFileName, statistics);
+            doStatistics(currentFileName, maxNumberOfClientsInQueuesAtATime);
             scheduler.stopServers();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
     }
 }
