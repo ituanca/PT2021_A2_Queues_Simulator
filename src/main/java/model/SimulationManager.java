@@ -154,7 +154,6 @@ public class SimulationManager implements Runnable{
                     count++;
                 }
             }
-            bw.write("     waiting time: " + server.getWaitingPeriod() + "  no of clients in queue: " + server.getNoOfClients());
             bw.newLine();
         } catch (IOException e) {
             e.printStackTrace();
@@ -170,6 +169,22 @@ public class SimulationManager implements Runnable{
         }
     }
 
+    public static void writeStatisticsResults(String fileName, Statistics statistics){
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileName, true))) {
+            bw.write("Statistics results:");
+            bw.newLine();
+            bw.write("average waiting time: " + statistics.changeToDecimalFormat(statistics.averageWaitingTime));
+            bw.newLine();
+            bw.write("average service time: " + statistics.changeToDecimalFormat(statistics.averageServiceTime));
+            bw.newLine();
+            bw.write("peak hour: " + statistics.peakHour);
+            bw.newLine();
+            bw.newLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void run() {
         int currentTime = 0;
@@ -177,47 +192,52 @@ public class SimulationManager implements Runnable{
         String test1FileName = "src/main/java/logs/test1.txt";
         String test2FileName = "src/main/java/logs/test2.txt";
         String test3FileName = "src/main/java/logs/test3.txt";
+        String currentFileName = test2FileName;
         int maxNumberOfClientsInQueuesAtATime = 0;
-        writeInputData(logFileName);
-        while(currentTime < timeLimit) {
-            Iterator<Client> i = generatedClients.iterator();
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            while(i.hasNext()) {
-                Client client = i.next();
-                if (client.getArrivalTime() == currentTime) {
-                    try {
-                        scheduler.dispatchClient(client, statistics);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    i.remove();
-                }else{
-                    if(client.getArrivalTime() > currentTime){
-                        break;
+
+        writeInputData(currentFileName);
+        while(currentTime <= timeLimit) {
+            if(!generatedClients.isEmpty() || !scheduler.checkIfAllTheServersAreEmpty()) {
+                Iterator<Client> i = generatedClients.iterator();
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                while (i.hasNext()) {
+                    Client client = i.next();
+                    if (client.getArrivalTime() == currentTime) {
+                        try {
+                            scheduler.dispatchClient(client, statistics);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        i.remove();
+                    } else {
+                        if (client.getArrivalTime() > currentTime) {
+                            break;
+                        }
                     }
                 }
+                if (scheduler.computeNoOfClientsCurrentlyInQueues() > maxNumberOfClientsInQueuesAtATime) {
+                    maxNumberOfClientsInQueuesAtATime = scheduler.computeNoOfClientsCurrentlyInQueues();
+                    statistics.setPeakHour(currentTime);
+                }
+                writeSimulationTime(currentFileName, currentTime);
+                writeWaitingClients(currentFileName);
+                writeServers(currentFileName);
             }
-            if(scheduler.computeNoOfClientsCurrentlyInQueues() > maxNumberOfClientsInQueuesAtATime ) {
-                maxNumberOfClientsInQueuesAtATime = scheduler.computeNoOfClientsCurrentlyInQueues();
-                statistics.setPeakHour(currentTime);
-            }
-            writeSimulationTime(logFileName, currentTime);
-            writeWaitingClients(logFileName);
-            writeServers(logFileName);
             currentTime++;
         }
         try {
             Thread.sleep(1000);
-            scheduler.stopServers();
             statistics.computeAverageWaitingTime();
-            System.out.println("average waiting time: " + statistics.averageWaitingTime);
+            System.out.println("average waiting time: " + statistics.changeToDecimalFormat(statistics.averageWaitingTime));
             statistics.computeAverageServiceTime();
-            System.out.println("average service time: " + statistics.averageServiceTime);
+            System.out.println("average service time: " + statistics.changeToDecimalFormat(statistics.averageServiceTime));
             System.out.println("peak hour: " + statistics.peakHour + " (" +  maxNumberOfClientsInQueuesAtATime + " clients)");
+            writeStatisticsResults(currentFileName, statistics);
+            scheduler.stopServers();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

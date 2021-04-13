@@ -57,6 +57,16 @@ public class Scheduler {
         return noOfClientsCurrentlyInQueues;
     }
 
+    public boolean checkIfAllTheServersAreEmpty(){
+        int noOfClosedServers = 0;
+        for(Server server : servers){
+            if(server.status.equals("Closed")){
+                noOfClosedServers++;
+            }
+        }
+        return noOfClosedServers == servers.size();
+    }
+
     public void dispatchClient(Client client, Statistics statistics) throws InterruptedException { strategy.addClient(servers, client, statistics); }
 
     public ArrayList<Server> getServers() { return servers; }

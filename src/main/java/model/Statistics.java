@@ -1,5 +1,7 @@
 package model;
 
+import java.text.DecimalFormat;
+
 public class Statistics {
 
     public double averageWaitingTime;
@@ -40,12 +42,10 @@ public class Statistics {
         this.averageServiceTime = this.totalServiceTime / this.totalNumberOfClientsFromQueues;
     }
 
-    public int getMaxNumberOfClientsInQueuesAtATime(int noOfClientsCurrentlyInQueues){
-        if(noOfClientsCurrentlyInQueues > this.maxNumberOfClientsInQueuesAtATime){
-            this.maxNumberOfClientsInQueuesAtATime = noOfClientsCurrentlyInQueues;
-        }
-        return this.maxNumberOfClientsInQueuesAtATime;
-    }
-
     public void setPeakHour(int peakHour) { this.peakHour = peakHour; }
+
+    public String changeToDecimalFormat(double numberToBeDisplayed){
+        DecimalFormat df2 = new DecimalFormat("#.##");
+        return df2.format(numberToBeDisplayed);
+    }
 }
