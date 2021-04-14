@@ -42,10 +42,11 @@ public class Statistics {
         this.averageServiceTime = this.totalServiceTime / this.totalNumberOfClientsFromQueues;
     }
 
-    public void setPeakHour(int peakHour) { this.peakHour = peakHour; }
-
     public String changeToDecimalFormat(double numberToBeDisplayed){
         DecimalFormat df2 = new DecimalFormat("#.##");
         return df2.format(numberToBeDisplayed);
     }
+
+    public void setPeakHour(int peakHour) { this.peakHour = peakHour; }
+
 }

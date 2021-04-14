@@ -207,7 +207,7 @@ public class SimulationManager implements Runnable{
         for (Server server : scheduler.getServers()) {
             writeServerToTheTextArea(textArea, server);
         }
-        textArea.appendText("-------------------------------------------------------------------------------------");
+        textArea.appendText("------------------------------------------------------------------------------------------------");
         textArea.appendText(NEW_LINE);
     }
 
@@ -230,14 +230,13 @@ public class SimulationManager implements Runnable{
     }
 
     public void writeStatisticsToTheTextArea(TextArea textArea, String averageWaitingTime, String averageServiceTime, Integer peakHour){
-        textArea.appendText("Statistics:" + NEW_LINE);
+        textArea.appendText("Simulation statistics:" + NEW_LINE);
         textArea.appendText("average waiting time: " + averageWaitingTime + NEW_LINE);
         textArea.appendText("average service time: " + averageServiceTime + NEW_LINE);
         textArea.appendText("peak hour: " + peakHour + NEW_LINE);
         textArea.appendText(NEW_LINE);
         textArea.appendText("Simulation completed successfully.");
     }
-
 
     @Override
     public void run() {

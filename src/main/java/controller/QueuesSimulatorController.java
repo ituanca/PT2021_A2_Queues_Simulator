@@ -1,19 +1,13 @@
 package controller;
 
 import javafx.application.Application;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import model.Server;
+
 import model.SimulationManager;
 import view.Interface;
-import model.Client;
 
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.ResourceBundle;
 
 public class QueuesSimulatorController {
 
@@ -30,46 +24,39 @@ public class QueuesSimulatorController {
     public ComboBox cbSelectionPolicy;
     public TextArea textArea;
 
-
-
     SimulationManager simulationManager;
 
     public void start(){ new Thread(() -> Application.launch(Interface.class)).start(); }
 
     private boolean validateInput(){
+        Alert alert = new Alert(Alert.AlertType.ERROR);
         if(tfNumberOfClients.getText().equals("") || tfNumberOfQueues.getText().equals("") || tfSimulationInterval.getText().equals("") ||
                 tfMinArrivalTime.getText().equals("") || tfMaxArrivalTime.getText().equals("") || tfMinServiceTime.getText().equals("") || tfMaxServiceTime.getText().equals("")){
-            Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setContentText("Please fill in all the fields");
             alert.show();
             return false;
         }
         if(getNumberOfClients() < 0 || getNumberOfQueues() < 0 || getSimulationInterval() < 0 || getMinArrivalTime() < 0 || getMaxArrivalTime() < 0 || getMinServiceTime() < 0 || getMaxServiceTime() < 0){
-            Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setContentText("Please fill in valid data");
             alert.show();
             return false;
         }
         if(getMinArrivalTime() > getMaxArrivalTime()){
-            Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setContentText("Please choose a maximum arrival time larger than the minimum arrival time");
             alert.show();
             return false;
         }
         if(getMinServiceTime() > getMaxServiceTime()){
-            Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setContentText("Please choose a maximum service time larger than the minimum service time");
             alert.show();
             return false;
         }
         if(getNumberOfClients() == -1 || getNumberOfQueues() == -1 || getSimulationInterval() == -1 || getMinServiceTime() == -1 || getMaxServiceTime() == -1 || getMinArrivalTime() == -1 || getMaxArrivalTime() == -1){
-            Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setContentText("Please fill in valid data");
             alert.show();
             return false;
         }
         if(cbSelectionPolicy.getSelectionModel().isEmpty()){
-            Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setContentText("Please choose a selection policy");
             alert.show();
             return false;
@@ -78,17 +65,16 @@ public class QueuesSimulatorController {
     }
 
     @FXML
-    public void startSimulation(ActionEvent actionEvent) throws InterruptedException {
+    public void startSimulation(ActionEvent actionEvent)  {
         actionEvent.consume();
-        textArea.setVisible(true);
         if(validateInput()){
+            textArea.setVisible(true);
             simulationManager = new SimulationManager(getNumberOfClients(), getNumberOfQueues(), getSimulationInterval(),
                     getMinArrivalTime(), getMaxArrivalTime(), getMinServiceTime(), getMaxServiceTime(), getSelectionPolicy(), textArea);
             Thread t = new Thread(simulationManager);
             t.start();
         }
     }
-
 
     private Integer getNumberOfClients() {
         try {

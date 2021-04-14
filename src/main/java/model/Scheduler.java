@@ -9,8 +9,6 @@ import java.util.ArrayList;
 public class Scheduler {
 
     private ArrayList<Server> servers;
-    private int noOfServers;
-    private int noOfClients;
     private Strategy strategy;
 
     public Scheduler(int noOfServers, SelectionPolicy policy) {
