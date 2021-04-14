@@ -1,5 +1,8 @@
 package model;
 
+import javafx.application.Platform;
+import javafx.scene.control.TextArea;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -21,8 +24,10 @@ public class SimulationManager implements Runnable{
     public final Scheduler scheduler;
     public final ArrayList<Client> generatedClients = new ArrayList<>();
     public final Statistics statistics;
+    public TextArea textArea;
+    private final static String NEW_LINE = "\n";
 
-    public SimulationManager(int noOfClients, int noOfServers, int timeLimit, int minArrivalTime, int maxArrivalTime, int minServiceTime, int maxServiceTime, String selectionPolicyString) {
+    public SimulationManager(int noOfClients, int noOfServers, int timeLimit, int minArrivalTime, int maxArrivalTime, int minServiceTime, int maxServiceTime, String selectionPolicyString, TextArea textArea) {
         this.noOfClients = noOfClients;
         this.noOfServers = noOfServers;
         this.timeLimit = timeLimit;
@@ -31,9 +36,10 @@ public class SimulationManager implements Runnable{
         this.minServiceTime = minServiceTime;
         this.maxServiceTime = maxServiceTime;
         this.simulationIsFinished = false;
+        this.textArea = textArea;
         establishSelectionPolicy(selectionPolicyString);
         createClientsArray();
-        this.scheduler = new Scheduler(noOfServers, generatedClients, selectionPolicy);
+        this.scheduler = new Scheduler(noOfServers, selectionPolicy);
         this.statistics = new Statistics();
         for(Client client : generatedClients){
             statistics.addServiceTime(client);
@@ -169,6 +175,70 @@ public class SimulationManager implements Runnable{
         writeStatisticsResults(currentFileName, statistics);
     }
 
+    public void writeCurrentDataToTheTextArea(TextArea textArea, int simulationTime, ArrayList<Client> clients){
+        writeSimulationTimeToTheTextArea(textArea, simulationTime);
+        writeWaitingClientsToTheTextArea(textArea, clients);
+        writeServersToTheTextArea(textArea);
+    }
+
+    public void writeSimulationTimeToTheTextArea(TextArea textArea, int simulationTime){
+        textArea.appendText("Time: " + simulationTime + NEW_LINE);
+    }
+
+    public void writeWaitingClientsToTheTextArea(TextArea textArea, ArrayList<Client> clients){
+        int count = 0;
+        if(clients.size() > 0) {
+            textArea.appendText("Waiting clients:" + NEW_LINE);
+            for (Client client : clients) {
+                textArea.appendText(" (" + client.getID() + ", " + client.getArrivalTime() + ", " + client.getServiceTime() + ") ");
+                count++;
+                if (count > 7) {
+                    count = 0;
+                    textArea.appendText(NEW_LINE);
+                }
+            }
+            if (count != 0) {
+                textArea.appendText(NEW_LINE);
+            }
+        }
+    }
+
+    public void writeServersToTheTextArea(TextArea textArea){
+        for (Server server : scheduler.getServers()) {
+            writeServerToTheTextArea(textArea, server);
+        }
+        textArea.appendText("-------------------------------------------------------------------------------------");
+        textArea.appendText(NEW_LINE);
+    }
+
+    public void writeServerToTheTextArea(TextArea textArea, Server server){
+        textArea.appendText("Queue " + server.getQueueIndex() + ": ");
+        int count = 0;
+        if(server.getStatus().equals(Server.CLOSED)){
+            textArea.appendText(server.status);
+        }else{
+            for(Client client: server.getClients()){
+                if (count > 7) {            // print max 6 servers in a row
+                    count = 0;
+                    textArea.appendText(NEW_LINE);
+                }
+                textArea.appendText("(" + client.getID() + ", " + client.getArrivalTime() + ", " + client.getServiceTime() + ") ");
+                count++;
+            }
+        }
+        textArea.appendText(NEW_LINE);
+    }
+
+    public void writeStatisticsToTheTextArea(TextArea textArea, String averageWaitingTime, String averageServiceTime, Integer peakHour){
+        textArea.appendText("Statistics:" + NEW_LINE);
+        textArea.appendText("average waiting time: " + averageWaitingTime + NEW_LINE);
+        textArea.appendText("average service time: " + averageServiceTime + NEW_LINE);
+        textArea.appendText("peak hour: " + peakHour + NEW_LINE);
+        textArea.appendText(NEW_LINE);
+        textArea.appendText("Simulation completed successfully.");
+    }
+
+
     @Override
     public void run() {
         int currentTime = 0;
@@ -210,12 +280,16 @@ public class SimulationManager implements Runnable{
                 writeSimulationTime(currentFileName, currentTime);
                 writeWaitingClients(currentFileName);
                 writeServers(currentFileName);
+                int finalCurrentTime = currentTime;
+                Platform.runLater(() -> writeCurrentDataToTheTextArea(textArea, finalCurrentTime, generatedClients));
             }
             currentTime++;
         }
         try {
             Thread.sleep(1000);
             doStatistics(currentFileName, maxNumberOfClientsInQueuesAtATime);
+            Platform.runLater(() -> writeStatisticsToTheTextArea(textArea, statistics.changeToDecimalFormat(statistics.averageWaitingTime),
+                    statistics.changeToDecimalFormat(statistics.averageServiceTime), statistics.peakHour));
             scheduler.stopServers();
         } catch (InterruptedException e) {
             e.printStackTrace();

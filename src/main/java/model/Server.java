@@ -37,7 +37,6 @@ public class Server implements Runnable{
         if(this.status.equals(CLOSED)){
             this.status = OPEN;
         }
-       // Thread.sleep(1000);
     }
 
     public void removeClientFromQueue(Client client){
@@ -90,19 +89,12 @@ public class Server implements Runnable{
 
     public AtomicInteger getWaitingPeriod() { return waitingPeriod; }
 
-    public void setWaitingPeriod(AtomicInteger waitingPeriod) { this.waitingPeriod = waitingPeriod; }
-
     public int getQueueIndex() { return queueIndex; }
 
-    public void setQueueIndex(int queueIndex) { this.queueIndex = queueIndex; }
-
     public AtomicInteger getNoOfClients() { return noOfClients; }
-
-    public void setNoOfClients(AtomicInteger noOfClients) { this.noOfClients = noOfClients; }
 
     public Thread getQueueThread() { return queueThread; }
 
     public String getStatus() { return status; }
 
-    public void setStatus(String status) { this.status = status; }
 }
