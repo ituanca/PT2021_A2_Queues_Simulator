@@ -19,10 +19,12 @@ public class QueuesSimulatorController {
     public TextField tfMinServiceTime;
     public TextField tfMaxServiceTime;
     public Button btnStartSimulation;
+    public Button btnStopSimulation;
     public String shortestWaitingTime;
     public String smallestNumberOfClients;
     public ComboBox cbSelectionPolicy;
     public TextArea textArea;
+    Thread t;
 
     SimulationManager simulationManager;
 
@@ -69,10 +71,20 @@ public class QueuesSimulatorController {
         actionEvent.consume();
         if(validateInput()){
             textArea.setVisible(true);
+            textArea.setText("");
+            btnStopSimulation.setVisible(true);
             simulationManager = new SimulationManager(getNumberOfClients(), getNumberOfQueues(), getSimulationInterval(),
                     getMinArrivalTime(), getMaxArrivalTime(), getMinServiceTime(), getMaxServiceTime(), getSelectionPolicy(), textArea);
-            Thread t = new Thread(simulationManager);
+            t = new Thread(simulationManager);
             t.start();
+        }
+    }
+
+    public void stopSimulation(ActionEvent actionEvent) {
+        actionEvent.consume();
+        if(t.isAlive()){
+            t.stop();
+            simulationManager.textArea.appendText("\nSimulation stopped.\n");
         }
     }
 
